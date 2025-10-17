@@ -42,8 +42,6 @@ def check_valid_heroicons(content):
     return results
 
 def main():
-    """
-    """
     try:
         input_data = json.load(sys.stdin)
     except json.JSONDecodeError as e:
@@ -56,8 +54,8 @@ def main():
         sys.exit(0)
 
     tool_input = input_data.get("tool_input", {})
-    command = tool_input.get("file_path", "")
-    if 'resources' not in command:
+    file_path = tool_input.get("file_path", "")
+    if 'resources' not in file_path:
         sys.exit(0)
 
     content = tool_input.get("content", "")
@@ -70,7 +68,6 @@ def main():
         sys.exit(2)
 
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()
