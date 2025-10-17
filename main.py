@@ -14,6 +14,7 @@
 
 import json
 import os
+import re
 import sys
 
 def check_valid_heroicons(content):
@@ -22,9 +23,21 @@ def check_valid_heroicons(content):
     """
     with open('heroicon-list.txt', 'r') as f:
         heroicon_list = f.read().splitlines()
+
+    # Add special flux icons that aren't in the heroicon list
+    allowed_icons = set(heroicon_list) | {'loading'}
+
+    # Extract icon names from both attribute form and component form
+    # Attribute form: icon="icon-name" or icon:trailing="icon-name"
+    # Component form: <flux:icon.icon-name />
+    attribute_pattern = r'icon(?::\w+)?="([^"]+)"'
+    component_pattern = r'<flux:icon\.(\w+(?:-\w+)*)\s*/?>'
+
+    found_icons = re.findall(attribute_pattern, content) + re.findall(component_pattern, content)
+
     results = []
-    for icon in content.split():
-        if icon not in heroicon_list:
+    for icon in found_icons:
+        if icon not in allowed_icons:
             results.append(icon)
     return results
 
@@ -39,7 +52,7 @@ def main():
         sys.exit(1)
 
     tool_name = input_data.get("tool_name", "")
-    if tool_name != "Edit|Write":
+    if tool_name not in ("Edit", "Write"):
         sys.exit(0)
 
     tool_input = input_data.get("tool_input", {})
@@ -52,8 +65,8 @@ def main():
         sys.exit(0)
 
     results = check_valid_heroicons(content)
-    if not results:
-        print(f"Error: Invalid heroicon names: {results.join(', ')}", file=sys.stderr)
+    if results:
+        print(f"Error: Invalid heroicon names: {', '.join(results)}", file=sys.stderr)
         sys.exit(2)
 
     sys.exit(0)
