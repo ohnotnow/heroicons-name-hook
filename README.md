@@ -69,6 +69,7 @@ The hook recognizes icons in these contexts:
 ## Valid Icons
 
 See `heroicon-list.txt` for the complete list of 315+ valid Heroicon names. The hook also recognizes a special `loading` icon that may not be in the standard list.
+You can run `php refresh_icon_list.php` to update the list.
 
 ## Error Handling
 
